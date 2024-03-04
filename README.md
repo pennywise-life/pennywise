@@ -1,5 +1,6 @@
 ## Pennywise
-[![codecov](https://codecov.io/gh/pennywise-life/pennywise/graph/badge.svg?token=RJZWLE3EIW)](https://codecov.io/gh/pennywise-life/pennywise)
+[![codecov](https://codecov.io/gh/pennywise-life/pennywise/graph/badge.svg?token=RJZWLE3EIW)](https://codecov.io/gh/pennywise-life/pennywise) [![Go Reference](https://pkg.go.dev/badge/github.com/pennywise-life/pennywise.svg)](https://pkg.go.dev/github.com/pennywise-life/pennywise)
+![Github Actions Status](https://github.com/pennywise-life/pennywise/actions/workflows/go.yml/badge.svg) 
 ### A Simple and Powerful Personal Finance Management Tool
 
 Pennywise is an open-source, cross-platform application that empowers you to take control of your finances with ease. It offers a streamlined interface and intuitive features to help you:
