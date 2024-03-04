@@ -9,3 +9,10 @@ format:
 
 run: 
 	@go run main.go
+
+test:
+	@go test -covermode=count -coverpkg=./... -coverprofile cover.out -v ./... 
+	@go tool cover -html cover.out -o cover.html
+
+total_test:
+	@go tool cover -func cover.out
