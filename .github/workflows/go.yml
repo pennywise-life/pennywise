@@ -32,11 +32,11 @@ jobs:
     needs: build
     steps:
       - name: Run Coverage
-        run: go test ./... -coverprofile=cover.out && go tool cover -html=cover.out
+        run: go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
       
       - name: Upload coverage report
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.out
+          files: ./coverage.txt
 
