@@ -10,63 +10,63 @@ import (
 
 var cfgFile string
 
+// InitConfig initializes Viper config.
+// If a config file is found, read it in.
 func InitConfig() {
 	if cfgFile != "" {
+		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
+		// Find home directory.
 		home, err := os.UserHomeDir()
 		if err != nil {
-			logrus.Errorf("Failed to get home directory: %v", err)
+			logrus.WithError(err).Errorf("Failed to get home directory")
 			os.Exit(1)
 		}
-		// check if config file exists
-		if _, err := os.Stat(home + "/.pennywise/.env.local"); os.IsNotExist(err) {
-			logrus.Info("Config file not found. Creating a new one...")
-			// create config file
-			// check if ~/.pennywise config file exists
-			if _, err := os.Stat(home + "/.pennywise"); os.IsNotExist(err) {
-				// create ~/.pennywise directory
-				err := os.Mkdir(home+"/.pennywise", 0755)
-				if err != nil {
-					logrus.Errorf("Failed to create config directory: %v", err)
-					os.Exit(1)
-				}
-			}
-			// create config.yaml file in ~/.pennywise
-			// check if ~/.pennywise/.env.local file exists
-			if _, err := os.Stat(home + "/.pennywise/.env.local"); os.IsNotExist(err) {
-				// create ~/.pennywise/.env.local file
-				_, err = os.Create(home + "/.pennywise/.env.local")
-				if err != nil {
-					logrus.Errorf("Failed to create config file: %v", err)
-					os.Exit(1)
-				}
-			}
-		}
-		envPath := home + "/.pennywise/.env.local"
+
+		// Search config in ~/.pennywise directory with name ".env.local".
 		viper.AddConfigPath(home + "/.pennywise")
 		viper.SetConfigType("env")
-		viper.SetConfigFile(envPath)
+		viper.SetConfigName(".env.local")
 
-		// set env variables
-		viper.AutomaticEnv()
-
-		// read config file
-		err = viper.ReadInConfig()
-		if err != nil {
-			logrus.Errorf("Failed to read config file: %v", err)
-			os.Exit(1)
+		// Create config file if not found.
+		if _, err := os.Stat(home + "/.pennywise/.env.local"); os.IsNotExist(err) {
+			logrus.Info("Config file not found. Creating a new one...")
+			// Create config directory if not exists.
+			if _, err := os.Stat(home + "/.pennywise"); os.IsNotExist(err) {
+				err = os.Mkdir(home+"/.pennywise", 0755)
+				if err != nil {
+					logrus.WithError(err).Errorf("Failed to create config directory")
+					os.Exit(1)
+				}
+			}
+			// Create config file.
+			f, err := os.Create(home + "/.pennywise/.env.local")
+			if err != nil {
+				logrus.WithError(err).Errorf("Failed to create config file")
+				os.Exit(1)
+			}
+			f.Close()
 		}
-
-		err = viper.Unmarshal(&models.Env{})
-		if err != nil {
-			logrus.Errorf("Failed to unmarshal config file: %v", err)
-			os.Exit(1)
-		}
-
-		// set config file
-		cfgFile = viper.ConfigFileUsed()
 	}
+
+	// Set environment variables.
+	viper.AutomaticEnv()
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err != nil {
+		logrus.WithError(err).Errorf("Failed to read config file")
+		os.Exit(1)
+	}
+
+	// Unmarshal the configuration into models.Env.
+	if err := viper.Unmarshal(&models.Env{}); err != nil {
+		logrus.WithError(err).Errorf("Failed to unmarshal config file")
+		os.Exit(1)
+	}
+
+	// Set config file used by Viper.
+	cfgFile = viper.ConfigFileUsed()
 }
 
 func GetConfig() *viper.Viper {
