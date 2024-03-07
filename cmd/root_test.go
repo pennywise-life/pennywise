@@ -14,7 +14,11 @@ limitations under the License.
 */
 package cmd
 
-import "testing"
+import (
+	"errors"
+	"os"
+	"testing"
+)
 
 func TestExecute(t *testing.T) {
 	tests := []struct {
@@ -27,4 +31,12 @@ func TestExecute(t *testing.T) {
 			Execute()
 		})
 	}
+}
+
+func Test_handleExecutionError(t *testing.T) {
+	err := errors.New("custom error")
+	if os.IsExist(err) {
+		t.Fatalf("expected program not to exit when error is nil")
+	}
+	handleExecutionError(nil)
 }

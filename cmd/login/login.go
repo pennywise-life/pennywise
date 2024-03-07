@@ -6,6 +6,7 @@ package login
 import (
 	"fmt"
 
+	"github.com/pennywise-life/pennywise/configs"
 	"github.com/spf13/cobra"
 )
 
@@ -31,6 +32,7 @@ func NewLoginCmd() *cobra.Command {
 }
 
 func (l *loginCmd) run(cmd *cobra.Command, args []string) error {
-	fmt.Println("login called")
+	v := configs.GetConfig()
+	fmt.Println("login called", v.Get("PORT"))
 	return nil
 }

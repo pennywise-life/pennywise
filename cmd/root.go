@@ -15,13 +15,12 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/pennywise-life/pennywise/cmd/login"
+	"github.com/pennywise-life/pennywise/configs"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var cfgFile string
@@ -60,7 +59,8 @@ func Execute() {
 
 func init() {
 	rootCmd := buildRootCommand()
-	cobra.OnInitialize(initConfig)
+
+	cobra.OnInitialize(configs.InitConfig)
 	setupRootCmdFlags(rootCmd)
 }
 
@@ -90,23 +90,4 @@ func handleExecutionError(err error) {
 func setupRootCmdFlags(rootCmd *cobra.Command) {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pennywise.yaml)")
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
-	} else {
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".pennywise")
-	}
-
-	viper.AutomaticEnv()
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
-	}
 }

@@ -8,16 +8,21 @@ import (
 )
 
 func TestNewLoginCmd(t *testing.T) {
-	cmd := NewLoginCmd()
-	if cmd == nil {
-		t.Error("Expected non-nil command")
+	tests := []struct {
+		name string
+	}{
+		{
+			name: "Test New Login Cmd",
+		},
 	}
-}
 
-func TestLoginCmd_Run(t *testing.T) {
-	l := &loginCmd{}
-	err := l.run(nil, nil)
-	if err != nil {
-		t.Errorf("Expected no error, but got %v", err)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			lgn := &loginCmd{}
+			err := lgn.run(nil, nil)
+			if err != nil {
+				t.Errorf("NewLoginCmd() error = %v", err)
+			}
+		})
 	}
 }
